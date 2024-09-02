@@ -4,6 +4,7 @@ export type UsersOutput = {
   userId: string;
   username: string;
   roles: string[];
+  password: string;
 };
 
 export class UserPresenter {
@@ -12,9 +13,19 @@ export class UserPresenter {
       return {
         userId: user.props.userId,
         username: user.props.username,
+        password: user.props.password,
         roles: user.props.roles,
       };
     });
     return data;
+  }
+
+  static toJson(user: User): UsersOutput {
+    return {
+      userId: user.props.userId,
+      username: user.props.username,
+      password: user.props.password,
+      roles: user.props.roles,
+    };
   }
 }

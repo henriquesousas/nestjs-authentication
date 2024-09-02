@@ -7,6 +7,8 @@ import { Cryptography } from '../../core/application/cryptography/cryptography';
 import { APP_GUARD } from '@nestjs/core';
 import { UserGuard } from '../@shared-module/guard/user.guard';
 import { RolesGuard } from '../@shared-module/guard/roles.guard';
+import { BCryptHashService } from '../../core/infrastructure/crytography/bcrypt-hash.service';
+import { Hash } from '../../core/application/cryptography/hash';
 
 const CRYPTOGRAPHY = {
   JWT_SERVICE: {
@@ -15,6 +17,13 @@ const CRYPTOGRAPHY = {
       return new JwtCryptographyService(jwtService);
     },
     inject: [JwtService],
+  },
+
+  BCRYPT_HASH_SERVICE: {
+    provide: BCryptHashService,
+    useFactory() {
+      return new BCryptHashService(12);
+    },
   },
 };
 
@@ -30,10 +39,14 @@ const REPOSITORY = {
 const SERVICE = {
   USER_SERVICE: {
     provide: UseService,
-    useFactory: (repository: UseRepository, cryptography: Cryptography) => {
-      return new UseService(repository, cryptography);
+    useFactory: (
+      repository: UseRepository,
+      cryptography: Cryptography,
+      hash: Hash,
+    ) => {
+      return new UseService(repository, cryptography, hash);
     },
-    inject: [UseRepositoryLocal, JwtCryptographyService],
+    inject: [UseRepositoryLocal, JwtCryptographyService, BCryptHashService],
   },
 };
 

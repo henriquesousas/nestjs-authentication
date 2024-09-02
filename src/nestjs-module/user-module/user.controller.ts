@@ -4,7 +4,9 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Param,
   Post,
+  Query,
   Request,
 } from '@nestjs/common';
 import {
@@ -33,20 +35,21 @@ export class UserController {
   @Roles(Role.Admin)
   @HttpCode(HttpStatus.OK)
   async getAll() {
-    const users = await this.userService.getAll();
+    const users = await this.userService.findAll();
     return UserPresenter.toJsonArray(users);
+  }
+
+  @Public()
+  @HttpCode(HttpStatus.OK)
+  @Get('me')
+  async findBy(@Query() query: { password: string; username: string }) {
+    const user = await this.userService.findOne(query.password, query.username);
+    return UserPresenter.toJson(user);
   }
 
   @Get('profile')
   @Roles(Role.Admin)
-  me(@Request() req) {
+  profile(@Request() req) {
     return req.user;
   }
-
-  // @Roles(Role.Admin)
-  // @HttpCode(HttpStatus.OK)
-  // @Get('login')
-  // findBy(@Body() signInDto: Record<string, any>) {
-  //   return this.authService.create(signInDto.username, signInDto.password);
-  // }
 }
