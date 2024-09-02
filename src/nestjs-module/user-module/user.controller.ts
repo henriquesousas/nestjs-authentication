@@ -16,7 +16,9 @@ import {
 import { Public } from '../@shared-module/decorator/public.decorator';
 import { UserPresenter } from './user.presenter';
 import { Role, Roles } from '../@shared-module/decorator/roles.decorator';
+import { SkipThrottle } from '@nestjs/throttler';
 
+@SkipThrottle()
 @Controller('user')
 export class UserController {
   constructor(private userService: UseService) {}
@@ -24,6 +26,7 @@ export class UserController {
   @Public()
   @Post()
   @HttpCode(HttpStatus.CREATED)
+  @SkipThrottle({ default: false })
   async create(@Body() dto: UserCreateDto) {
     const access_token = await this.userService.create(dto);
     return {
