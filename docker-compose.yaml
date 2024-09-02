@@ -1,0 +1,14 @@
+services:
+  app:
+    container_name: app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 3000:3000
+    expose:
+      - 3000
+    # volumes:
+    #   - ./customer-microservice/src:/usr/src/app/src
+    # command: npm run start:dev
+    command:  tail -f /dev/null
