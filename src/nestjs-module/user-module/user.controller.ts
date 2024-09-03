@@ -13,9 +13,9 @@ import {
   UserCreateDto,
   UseService,
 } from '../../core/application/service/user.service';
-import { Public } from '../@shared-module/decorator/public.decorator';
+import { Public } from '../@shared/decorator/public.decorator';
 import { UserPresenter } from './user.presenter';
-import { Role, Roles } from '../@shared-module/decorator/roles.decorator';
+import { Role, Roles } from '../@shared/decorator/roles.decorator';
 import { SkipThrottle } from '@nestjs/throttler';
 
 @SkipThrottle()
