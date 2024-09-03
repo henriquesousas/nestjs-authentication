@@ -1,28 +1,29 @@
-import { JwtService } from '@nestjs/jwt';
-import { JwtCryptographyService } from '../../core/infrastructure/crytography/jwt-cryptography.service';
-import { UseRepositoryLocal } from '../../core/infrastructure/db/local/user.repository-local';
+import { JwtService as JwtServiceNestJs } from '@nestjs/jwt';
+import { JwtService } from '../../core/infrastructure/crytography/jwt.service';
+
 import { UseService } from '../../core/application/service/user.service';
 import { UseRepository } from '../../core/domain/repository/use.respository';
 import { Cryptography } from '../../core/application/cryptography/cryptography';
 import { APP_GUARD } from '@nestjs/core';
 import { UserGuard } from '../@shared-module/guard/user.guard';
 import { RolesGuard } from '../@shared-module/guard/roles.guard';
-import { BCryptHashService } from '../../core/infrastructure/crytography/bcrypt-hash.service';
+import { BCryptService } from '../../core/infrastructure/crytography/bcrypt.service';
 import { Hash } from '../../core/application/cryptography/hash';
+import { UseRepositoryLocal } from '../../core/infrastructure/repository/local/user.repository-local';
 
 const CRYPTOGRAPHY = {
   JWT_SERVICE: {
-    provide: JwtCryptographyService,
-    useFactory: (jwtService: JwtService) => {
-      return new JwtCryptographyService(jwtService);
+    provide: JwtService,
+    useFactory: (jwtServiceNestJs: JwtServiceNestJs) => {
+      return new JwtService(jwtServiceNestJs);
     },
-    inject: [JwtService],
+    inject: [JwtServiceNestJs],
   },
 
   BCRYPT_HASH_SERVICE: {
-    provide: BCryptHashService,
+    provide: BCryptService,
     useFactory() {
-      return new BCryptHashService(12);
+      return new BCryptService(12);
     },
   },
 };
@@ -46,7 +47,7 @@ const SERVICE = {
     ) => {
       return new UseService(repository, cryptography, hash);
     },
-    inject: [UseRepositoryLocal, JwtCryptographyService, BCryptHashService],
+    inject: [UseRepositoryLocal, JwtService, BCryptService],
   },
 };
 

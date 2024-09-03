@@ -1,7 +1,7 @@
 import { Hash } from '../../application/cryptography/hash';
 import * as bcrypt from 'bcrypt';
 
-export class BCryptHashService implements Hash {
+export class BCryptService implements Hash {
   constructor(private readonly salt: number = 12) {}
 
   async create(value: string): Promise<string> {

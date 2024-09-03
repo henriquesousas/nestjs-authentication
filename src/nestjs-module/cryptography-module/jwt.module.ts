@@ -1,7 +1,6 @@
 import { Global, Module } from '@nestjs/common';
 import { JwtModule as NestJwtModule, JwtService } from '@nestjs/jwt';
 
-//TODO: Usar configservice
 @Global()
 @Module({
   imports: [
