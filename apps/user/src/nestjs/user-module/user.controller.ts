@@ -17,38 +17,18 @@ import { UserPresenter } from './user.presenter';
 import { SkipThrottle } from '@nestjs/throttler';
 import { Role, Roles } from '@app/shared/nestjs/decorator';
 import { Public } from '@app/shared/nestjs/decorator';
-import {
-  ClientProxy,
-  ClientProxyFactory,
-  Transport,
-} from '@nestjs/microservices';
+import { ClientProxy } from '@nestjs/microservices';
+import { MyRabbitMQService } from './rabbitmq/rabbitmq-service';
 
 @SkipThrottle()
 @Controller('user')
 export class UserController {
-  private clientProxy: ClientProxy;
-  // constructor(private userService: UseService) {}
-
-  // @Inject(queueOptions.adminBackendQueue.name)
-  //   private readonly adminBackendProxy: ClientProxy,
-
-  constructor(private userService: UseService) {
-    this.clientProxy = ClientProxyFactory.create({
-      transport: Transport.RMQ,
-      options: {
-        urls: ['amqp://admin:admin@rabbitmq:5672'],
-        queue: 'admin-backend',
-        //   noAck: true,
-        //   queueOptions: {
-        //     durable: true,
-        //     deadLetterExchange: 'my_dlq',
-        //     deadLetterRoutingKey: 'my_dlq_key',
-        //     messageTtl: 5000,
-        //     maxLength: 2,
-        //   },
-      },
-    });
-  }
+  constructor(
+    private readonly userService: UseService,
+    private readonly rabbitMQService: MyRabbitMQService,
+    @Inject('CATS_SERVICE') private client2: ClientProxy,
+    @Inject('CATS_SERVICE2') private client3: ClientProxy,
+  ) {}
 
   @Public()
   @Post()
@@ -56,7 +36,14 @@ export class UserController {
   @SkipThrottle({ default: false })
   async create(@Body() dto: UserCreateDto) {
     const access_token = await this.userService.create(dto);
-    this.clientProxy.emit('criar-categoria', {
+
+    this.rabbitMQService.sendMessage('criar-user', 'OK');
+
+    this.client2.emit('criar-categoria', {
+      message: 'ok',
+    });
+
+    this.client3.emit('criar-categoria', {
       message: 'ok',
     });
 
@@ -86,9 +73,4 @@ export class UserController {
   profile(@Request() req) {
     return req.user;
   }
-
-  // @EventPattern('criar-categoria')
-  // async handle(@Payload() data: { message: string }) {
-  //   console.log(data);
-  // }
 }

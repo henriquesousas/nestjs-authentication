@@ -11,4 +11,18 @@ services:
     # volumes:
     #   - ./customer-microservice/src:/usr/src/app/src
     # command: npm run start:dev
-    command:  tail -f /dev/null
+    command: tail -f /dev/null
+
+  rabbitmq:
+    container_name: rabbitmq
+    image: 'rabbitmq:3.12.14-management-alpine'
+    # hostname: my-rabbitmq
+    environment:
+      # RABBITMQ_ERLANG_COOKIE: 'SWQOKODSQALRPCLNMEQG'
+      RABBITMQ_DEFAULT_PASS: 'admin'
+      RABBITMQ_DEFAULT_USER: 'admin'
+    volumes:
+      - ./rabbitmq-data:/var/lib/rabbitmq
+    ports:
+      - 15672:15672
+      - 5672:5672
