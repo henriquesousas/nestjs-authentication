@@ -18,7 +18,7 @@ import { SkipThrottle } from '@nestjs/throttler';
 import { Role, Roles } from '@app/shared/nestjs/decorator';
 import { Public } from '@app/shared/nestjs/decorator';
 import { ClientProxy } from '@nestjs/microservices';
-import { MyRabbitMQService } from './rabbitmq/rabbitmq-service';
+import { MyRabbitMQService } from './rabbitmq-service';
 
 @SkipThrottle()
 @Controller('user')
@@ -37,7 +37,7 @@ export class UserController {
   async create(@Body() dto: UserCreateDto) {
     const access_token = await this.userService.create(dto);
 
-    this.rabbitMQService.sendMessage('criar-user', 'OK');
+    this.rabbitMQService.emit('criar-user', 'OK');
 
     this.client2.emit('criar-categoria', {
       message: 'ok',

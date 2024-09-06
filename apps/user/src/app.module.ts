@@ -1,35 +1,25 @@
 import { Module } from '@nestjs/common';
-import { ClientsModule, Transport } from '@nestjs/microservices';
 import { ThrottlerModule } from '@app/shared/nestjs/throttler';
 import { JwtModule } from '@app/shared/nestjs/cryptography';
 import { UserController } from './nestjs/user-module/user.controller';
 import { USER_PROVIDE } from './nestjs/user-module/user.provider';
 import { UserConsume } from './nestjs/user-module/user.consumer';
-import { MyRabbitMQService } from './nestjs/user-module/rabbitmq/rabbitmq-service';
+import { MyRabbitMQService } from './nestjs/user-module/rabbitmq-service';
+import { RabbitMQModule } from '../../../libs/shared/src/nestjs/message-broker/rabbitmq.module';
+
+const queues = [
+  {
+    providerName: 'CATS_SERVICE',
+    queue: 'cats',
+  },
+  {
+    providerName: 'CATS_SERVICE2',
+    queue: 'cats2',
+  },
+];
 
 @Module({
-  imports: [
-    ClientsModule.register([
-      {
-        name: 'CATS_SERVICE',
-        transport: Transport.RMQ,
-        options: {
-          urls: ['amqp://admin:admin@rabbitmq:5672'],
-          queue: 'cats',
-        },
-      },
-      {
-        name: 'CATS_SERVICE2',
-        transport: Transport.RMQ,
-        options: {
-          urls: ['amqp://admin:admin@rabbitmq:5672'],
-          queue: 'cats2',
-        },
-      },
-    ]),
-    JwtModule,
-    ThrottlerModule,
-  ],
+  imports: [RabbitMQModule.forQueueAsync(queues), JwtModule, ThrottlerModule],
   controllers: [UserController],
   providers: [
     UserConsume,

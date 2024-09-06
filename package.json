@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
+    "@nestjs/config": "^3.2.3",
     "@nestjs/core": "^10.0.0",
     "@nestjs/jwt": "^10.2.0",
     "@nestjs/microservices": "^10.4.1",
@@ -81,7 +82,7 @@
     ],
     "moduleNameMapper": {
       "^@app/shared(|/.*)$": "<rootDir>/libs/shared/src/$1",
-       "@app/shared": "<rootDir>/libs/shared/src"
+      "@app/shared": "<rootDir>/libs/shared/src"
     }
   }
 }

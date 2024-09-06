@@ -19,7 +19,7 @@ export class MyRabbitMQService {
     });
   }
 
-  async sendMessage(topic: string, message: string) {
+  async emit(topic: string, message: string) {
     return this.client.emit(topic, { message });
   }
 }
